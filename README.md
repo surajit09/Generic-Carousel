@@ -5,7 +5,7 @@
 This Generic Carousel is a wrapper for leandrowd's react-responsive-carousel package (https://github.com/leandrowd/react-responsive-carousel). Many thanks to https://github.com/leandrowd/ for doing such a great job writing and maintaining the underlying component that this package wraps!
 
 # Overview
-This carousel widget that cycles through twelve images via the `prev` and `next` buttons. These are styled differently depending on the viewport size.
+This carousel widget that cycles through ten flower images via the `prev` and `next` buttons. These are styled differently depending on the viewport size.
 
 The images are fetched from UnSplash which is a public API. Once they are available to the app load them into the carousel and enable the functionality for the buttons.
 

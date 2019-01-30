@@ -8,8 +8,51 @@ import axios from 'axios';
 
  
 export default class GenericCarousel extends Component {
-    state={images:[]}
+
+    constructor(props) {
+        super(props)
     
+        this.state={
+            images:[],
+            currentIndex: 0
+        }
+      }
+    
+      goToPrevSlide(e) {
+        e.preventDefault();
+    
+        let index = this.state.currentIndex;
+        let { images } = this.state;
+        let slidesLength = images.length;
+    
+        if (index < 1) {
+          index = slidesLength;
+        }
+    
+        --index;
+    
+        this.setState({
+            currentIndex: index
+        });
+      }
+  
+      goToNextSlide(e) {
+        e.preventDefault();
+    
+        let index = this.state.currentIndex;
+        let { images } = this.state;
+        let slidesLength = images.length - 1;
+    
+        if (index === slidesLength) {
+          index = -1;
+        }
+    
+        ++index;
+    
+        this.setState({
+            currentIndex: index
+        });
+      }
 
     componentDidMount(){
         
@@ -29,25 +72,46 @@ export default class GenericCarousel extends Component {
     render() {
         if(this.state.images.length>0){
             return (
-                <Carousel showArrows={true} >
-                    {
-                            this.state.images.map(image=>{
-                              return (
-                                  <div key={image.id}>
-                                        <img src={image.urls.regular}  alt={image.description}/>
-                                        <p className="legend">{ image.description }</p>
-                                  </div>
-                                
-                              )  
-                            }) 
-                    }
-                </Carousel>
+                <div>
+                    <div className="card"> 
+                            <div className="content">
+                                <div className="header">
+                                    Carousel Test
+                                </div>
+                                <Carousel selectedItem={this.state.currentIndex} >
+                                {
+                                        this.state.images.map(image=>{
+                                        return (
+                                            <div key={image.id}>
+                                                    <img src={image.urls.regular}  alt={image.description}/>
+                                                    <p className="legend">{ image.description }</p>
+                                            </div>
+                                            
+                                        )  
+                                        }) 
+                                }
+                            </Carousel>
+                        </div>
+                    </div>
+                    <div className="card">
+                        <div className="extra content">
+                            <div className="ui two buttons">
+                                <div className="ui primary button"  onClick={e => this.goToPrevSlide(e)}>Prev</div>
+                                <div className="ui primary button" onClick={e => this.goToNextSlide(e)}>Next</div>
+                            </div>
+
+                        </div>
+                    </div>
+                   
+                </div>
+                
+                
+
             );
         }
-        else{
+        
             return <div>Loading..</div>
-        }
-
+        
        
     }
 };
