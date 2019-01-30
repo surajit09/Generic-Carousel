@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+//import {isMobile} from 'react-device-detect';
 import axios from 'axios';
 
 
@@ -14,7 +15,8 @@ export default class GenericCarousel extends Component {
     
         this.state={
             images:[],
-            currentIndex: 0
+            currentIndex: 0,
+            width: window.innerWidth
         }
       }
     
@@ -54,8 +56,25 @@ export default class GenericCarousel extends Component {
         });
       }
 
+
+      componentWillMount() {
+        window.addEventListener('resize', this.handleWindowSizeChange);
+      }
+      
+      // make sure to remove the listener
+      // when the component is not mounted anymore
+      componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowSizeChange);
+      }
+      
+      handleWindowSizeChange = () => {
+        this.setState({ width: window.innerWidth });
+      };
+
+
+
     componentDidMount(){
-        
+        //Get the images from the API
         axios.get('https://api.unsplash.com/search/photos',{
           params:{query:'flowers'},
           headers:{
@@ -69,8 +88,11 @@ export default class GenericCarousel extends Component {
             //console.log(response.data.results) 
         })
       }
-    render() {
-        if(this.state.images.length>0){
+
+      renderContent = () => {
+        const { width } = this.state;
+        const isMobile = width <= 500;
+        if (!isMobile) {
             return (
                 <div>
                     <div className="card"> 
@@ -93,26 +115,62 @@ export default class GenericCarousel extends Component {
                             </Carousel>
                         </div>
                     </div>
-                    <div className="card">
-                        <div className="extra content">
-                            <div className="ui two buttons">
-                                <div className="ui primary button"  onClick={e => this.goToPrevSlide(e)}>Prev</div>
-                                <div className="ui primary button" onClick={e => this.goToNextSlide(e)}>Next</div>
-                            </div>
+                    
+                        <div className="card">
+                            <div className="extra content">
+                                <div className="ui two buttons">
+                                    <div className="ui primary button"  onClick={e => this.goToPrevSlide(e)}>Prev</div>
+                                    <div className="ui primary button" onClick={e => this.goToNextSlide(e)}>Next</div>
+                                </div>
 
+                            </div>
                         </div>
-                    </div>
-                   
+                                      
                 </div>
                 
                 
 
             );
         }
+        return (
+            <div>
+                <div className="card"> 
+                        <div className="content">
+                            <div className="header">
+                                Carousel Test
+                            </div>
+                            <Carousel selectedItem={this.state.currentIndex} >
+                            {
+                                    this.state.images.map(image=>{
+                                    return (
+                                        <div key={image.id}>
+                                                <img src={image.urls.regular}  alt={image.description}/>
+                                                <p className="legend">{ image.description }</p>
+                                        </div>
+                                        
+                                    )  
+                                    }) 
+                            }
+                        </Carousel>
+                    </div>
+                </div>
+                
+                                 
+            </div>
+            
+            
+
+        );
+    }
+
+
+    render() {
+        if(this.state.images.length>0){
+          return  this.renderContent();
+        }
         
             return <div>Loading..</div>
-        
-       
+
     }
 };
  
